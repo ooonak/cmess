@@ -1,0 +1,4 @@
+data=[
+{latitude: 28.304380, longtitude: -74.575195, info 'Type=UFO'},
+{latitude: 26.224447, longtitude: -71.477051, info 'Type=UFO'}
+]

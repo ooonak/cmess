@@ -1,0 +1,404 @@
+#include <stdio.h>
+#include <math.h>
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
+#include "spaceship.h"
+#include "asteroid.h"
+#include "blast.h"
+#include "game.h"
+
+const float FPS = 60;
+const int SCREEN_W = 1024;
+const int SCREEN_H = 768;
+const int ROIDS = 15;
+const int DEBUG_MODE = 0;
+int ROIDS_ALIVE = 0;
+int score = 0;
+Asteroid* last;
+
+void ship_collision(Asteroid *roid, Spaceship *ship)
+{
+  double dist_x = roid->sx - ship->sx;
+  double dist_y = roid->sy - ship->sy;
+  double dist = sqrt((dist_x * dist_x) + (dist_y * dist_y));
+  double roid_radius = roid->scale * 26;
+
+  /* 8 is ship radius, if collision and 5 seconds is gone. */
+  if (dist <= abs(roid_radius + 8) && ship->timer < 1) {
+    if (!DEBUG_MODE) {
+      ship->lives--;
+      score = 0;
+      ship->sx = SCREEN_W/2;
+      ship->sy = SCREEN_H/2;
+      ship->heading = 0.0;
+      ship->speed = 0.0;
+      ship->timer = 5 * FPS;
+      ship->color = al_map_rgb(0, 150, 0);
+    }
+  }
+}
+
+/* Collision between blast and asteroid. */
+void blast_collision(Asteroid *roid, Blast *blast)
+{
+  double dist_x = roid->sx - blast->sx;
+  double dist_y = roid->sy - blast->sy;
+  double dist = sqrt((dist_x * dist_x) + (dist_y * dist_y));
+  double roid_radius = roid->scale * 26;
+
+  /* 3 is blast radius */
+  if (dist <= abs(roid_radius + 3)) {
+    blast->alive = 0;
+    if (roid->scale > 0.9) {
+      Asteroid* tmpRoid = last;
+      last->next = split_roid(roid);
+      last = last->next;
+      last->prior = tmpRoid;
+      score = score + 20;
+    } else {
+      roid->gone = 1;
+      ROIDS_ALIVE--;
+      score = score + 30;
+    }
+  }
+}
+
+/* Calculate collision, distance between two circles vs. radius */
+void roid_collision(Asteroid *roid1, Asteroid *roid2)
+{
+  double dist_x = roid1->sx - roid2->sx;
+  double dist_y = roid1->sy - roid2->sy;
+  double dist = sqrt((dist_x * dist_x) + (dist_y * dist_y));
+  int radius = 22;
+  double radius1 = roid1->scale * radius;
+  double radius2 = roid2->scale * radius;
+
+  if (dist <= abs(radius1 + radius2)) {
+    int tmp_heading = roid1->heading;
+    roid1->heading = roid2->heading;
+    roid2->heading = tmp_heading;
+  }
+}
+
+/* Check for collisions */
+void check_collision(Asteroid* last, Spaceship* ship, Blast** blasts)
+{
+  Asteroid* i = last;
+  Asteroid* k = NULL;
+
+  /* Start with last asteroid, loop trough until next is null */
+  for (; i != NULL; i = i->prior ) {
+
+    /* Only check for collision if timer is 0, else count it down. */
+    if(!ship->timer && !i->gone) {
+      ship->color = al_map_rgb(0, 180, 250);
+      ship_collision(i, ship);
+    }
+
+    if (!i->gone) {
+      /* Control for collision with every asteroid prior 
+       * to this one (k) in the linked list */
+      k = i->prior;
+      for (; k != NULL; k = k->prior ) {
+        if (k != i && !k->gone) {
+          roid_collision(i, k);
+        }
+      }
+      /* Collision with blast. */
+      int j;
+      for (j=0; j<100; j++) {
+        if (blasts[j]->alive)
+          blast_collision(i, blasts[j]);
+      }
+    }
+  }
+}
+
+int main(int argc, char **argv)
+{
+  ALLEGRO_DISPLAY *display = NULL;
+  ALLEGRO_EVENT_QUEUE *event_queue = NULL;
+  ALLEGRO_TIMER *timer = NULL;
+  ALLEGRO_FONT *font_arial_36 = NULL;
+  ALLEGRO_FONT *font_arial_24 = NULL;
+  ALLEGRO_TRANSFORM transform;
+  bool key[6] = { false, false, false, false, false, true };
+  bool redraw = true;
+  bool doexit = false;
+  char display_score[20];
+  char display_lives[20];
+  char display_ammo[20];
+  char display_countdown[20];
+  int ammo = 99;
+
+  if(!al_init()) {
+    fprintf(stderr, "failed to initialize allegro!\n");
+    return -1;
+  }
+
+  al_init_font_addon();
+  if (!al_init_ttf_addon()) {
+    fprintf(stderr, "failed to initialize ttf addon!\n");
+    return -1;
+  }
+
+  if(!al_install_keyboard()) {
+    fprintf(stderr, "failed to initialize the keyboard!\n");
+    return -1;
+  }
+
+  timer = al_create_timer(1.0 / FPS);
+  if(!timer) {
+    fprintf(stderr, "failed to create timer!\n");
+    return -1;
+  }
+
+  display = al_create_display(SCREEN_W, SCREEN_H);
+  if(!display) {
+    fprintf(stderr, "failed to create display!\n");
+    al_destroy_timer(timer);
+    return -1;
+  }
+
+  event_queue = al_create_event_queue();
+    if(!event_queue) {
+      fprintf(stderr, "failed to create event_queue!\n");
+      al_destroy_display(display);
+      al_destroy_timer(timer);
+      return -1;
+    }
+
+  font_arial_36 = al_load_ttf_font("arial.ttf", 36, 0);
+  if (!font_arial_36){
+    fprintf(stderr, "arial 36 not loaded!\n" );
+    return -1;
+  }
+
+  font_arial_24 = al_load_ttf_font("arial.ttf", 24, 0);
+  if (!font_arial_36){
+    fprintf(stderr, "arial 24 not loaded!\n" );
+    return -1;
+  }
+
+  al_init_primitives_addon();
+
+  al_register_event_source(event_queue, al_get_display_event_source(display));
+  al_register_event_source(event_queue, al_get_timer_event_source(timer));
+  al_register_event_source(event_queue, al_get_keyboard_event_source());
+
+  /* Start game */
+  Spaceship* ship = new_ship();
+  last = make_roids(ROIDS);
+  Blast **blasts = new_blasts();
+  
+  int countdown = 10;
+  while(countdown && !DEBUG_MODE) {
+    al_clear_to_color(al_map_rgb(0,0,0));
+    /* Welcome - Ugly code, write nicer function. */
+    al_identity_transform(&transform);
+    al_use_transform(&transform);
+    al_draw_text(font_arial_36, 
+                 al_map_rgb(255,0,0), 
+                 SCREEN_W/2, 
+                 100,
+                 ALLEGRO_ALIGN_CENTRE, 
+                 "Welcome to Casper's BLASTEROIDS!");
+    al_identity_transform(&transform);
+    al_use_transform(&transform);
+    al_draw_text(font_arial_24, 
+                 al_map_rgb(230,230,230), 
+                 SCREEN_W/2, 
+                 150,
+                 ALLEGRO_ALIGN_CENTRE, 
+                 "You got three lives, 100 shots and a lot of asteroids to blast.");
+    al_identity_transform(&transform);
+    al_use_transform(&transform);
+    al_draw_text(font_arial_24, 
+                 al_map_rgb(230,230,230), 
+                 SCREEN_W/2, 
+                 170,
+                 ALLEGRO_ALIGN_CENTRE, 
+                 "Fire with space, steer with the arrow keys and hit escape");
+    al_identity_transform(&transform);
+    al_use_transform(&transform);
+    al_draw_text(font_arial_24, 
+                 al_map_rgb(230,230,230), 
+                 SCREEN_W/2, 
+                 190,
+                 ALLEGRO_ALIGN_CENTRE, 
+                 "if you don't dare to play to the end...");
+    al_identity_transform(&transform);
+    al_use_transform(&transform);
+    al_draw_text(font_arial_24, 
+                 al_map_rgb(230,230,230), 
+                 SCREEN_W/2, 
+                 230,
+                 ALLEGRO_ALIGN_CENTRE, 
+                 "(If you get hit by and asteroid, you will die,"); 
+    al_identity_transform(&transform);
+    al_use_transform(&transform);
+    al_draw_text(font_arial_24, 
+                 al_map_rgb(230,230,230), 
+                 SCREEN_W/2, 
+                 250,
+                 ALLEGRO_ALIGN_CENTRE, 
+                 "the first five seconds of a new life, they won't hurt you.)");
+    sprintf(display_countdown, "%d", countdown);
+    al_identity_transform(&transform);
+    al_use_transform(&transform);
+    al_draw_text(font_arial_24, 
+                 al_map_rgb(230,230,230), 
+                 SCREEN_W/2, 
+                 300,
+                 ALLEGRO_ALIGN_CENTRE, 
+                 display_countdown);
+
+    al_flip_display();
+    sleep(1);
+    countdown--;
+  }
+
+  al_start_timer(timer);
+
+  while(!doexit) {
+    ALLEGRO_EVENT ev;
+    al_wait_for_event(event_queue, &ev);
+    if(ev.type == ALLEGRO_EVENT_TIMER) {
+      redraw = true;
+      if(ship->timer > 0)
+      ship->timer--;
+    }
+
+    else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+      break;
+    }
+
+    else if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+      switch(ev.keyboard.keycode) {
+        case ALLEGRO_KEY_K:
+        case ALLEGRO_KEY_UP:
+          key[KEY_UP] = true;
+          move_ship(ship, KEY_UP);
+          break;
+        case ALLEGRO_KEY_J:
+        case ALLEGRO_KEY_DOWN:
+          key[KEY_DOWN] = true;
+          move_ship(ship, KEY_DOWN);
+          break;
+        case ALLEGRO_KEY_H:
+        case ALLEGRO_KEY_LEFT:
+          key[KEY_LEFT] = true;
+          move_ship(ship, KEY_LEFT);
+          break;
+        case ALLEGRO_KEY_L:
+        case ALLEGRO_KEY_RIGHT:
+          key[KEY_RIGHT] = true;
+          move_ship(ship, KEY_RIGHT);
+          break;
+        case ALLEGRO_KEY_SPACE:
+          key[KEY_SPACE] = true;
+          if (ammo>0) {
+            shoot_blast(blasts[ammo], ship);
+            ammo--;
+          }
+          break;
+        case ALLEGRO_KEY_ESCAPE:
+          doexit = true;
+          break;
+      }
+    }
+
+    if(redraw && al_is_event_queue_empty(event_queue)) {
+      redraw = false;
+      al_clear_to_color(al_map_rgb(0,0,0));
+
+      move_ship(ship, NONE);
+      draw_ship(ship);
+
+      move_blasts(blasts);
+      draw_blasts(blasts);
+
+      check_collision(last, ship, blasts);
+
+      move_roids(last);
+      draw_roids(last);
+
+      if(!ship->lives || !ammo) {
+        /* Game over. */
+        al_identity_transform(&transform);
+        al_use_transform(&transform);
+        al_draw_text(font_arial_36, 
+                     al_map_rgb(200,200,200), 
+                     SCREEN_W/2, 
+                     SCREEN_H/2-100, 
+                     ALLEGRO_ALIGN_CENTRE, 
+                     "GAME OVER");
+        doexit = "true";
+      }
+
+      if(!ROIDS_ALIVE) {
+        /* You Won. */
+        al_identity_transform(&transform);
+        al_use_transform(&transform);
+        al_draw_text(font_arial_36, 
+                     al_map_rgb(200,200,200), 
+                     SCREEN_W/2, 
+                     SCREEN_H/2-100, 
+                     ALLEGRO_ALIGN_CENTRE, 
+                     "YOU WON");
+        doexit = "true";
+      }
+
+      /* Score */
+      al_identity_transform(&transform);
+      al_use_transform(&transform);
+
+      sprintf(display_score, "%d", score);
+      al_draw_text(font_arial_24, 
+                   al_map_rgb(200,200,200), 
+                   50, 
+                   10, 
+                   ALLEGRO_ALIGN_CENTRE, 
+                   display_score);
+      /* Lives */
+      sprintf(display_lives, "%d", ship->lives);
+      al_draw_text(font_arial_24, 
+                   al_map_rgb(200,200,200), 
+                   SCREEN_W-50, 
+                   10, 
+                   ALLEGRO_ALIGN_CENTRE, 
+                   display_lives);
+      /* Ammo */
+      al_identity_transform(&transform);
+      al_use_transform(&transform);
+
+      sprintf(display_ammo, "%d", ammo);
+      al_draw_text(font_arial_24, 
+                   al_map_rgb(200,200,200), 
+                   50, 
+                   SCREEN_H-50,
+                   ALLEGRO_ALIGN_CENTRE, 
+                   display_ammo);
+
+      al_flip_display();
+      if (doexit)
+        sleep(3);
+    }
+  }
+
+  destroy_ship(ship);
+  destroy_roids(last);
+  destroy_blasts(blasts);
+
+  /* End game. */
+
+  al_shutdown_primitives_addon();
+  al_destroy_timer(timer);
+  al_destroy_display(display);
+  al_destroy_event_queue(event_queue);
+
+  return 0;
+}
+

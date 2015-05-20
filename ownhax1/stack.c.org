@@ -1,0 +1,25 @@
+#include <stdlib.h>
+#include <stdio.h>
+#define STACKSIZE 10
+
+int top=-1;
+int stack[STACKSIZE];
+
+#define push(i) stack[++top]=i
+#define pop() stack[top--]
+
+int main()
+{
+  push(2);
+  push(4);
+  push(9);
+  push(3);
+  push(7);
+
+  while(top != -1) {
+    printf("[%d] = ", top);
+    printf("%d\n", pop());
+  }
+
+  return 0;
+}

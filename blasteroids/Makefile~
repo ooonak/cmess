@@ -1,0 +1,11 @@
+spaceship.o: spaceship.c spaceship.h 
+	gcc -c spaceship.c
+
+asteroid.o: asteroid.c asteroid.h
+	gcc -c asteroid.c
+
+blast.o: blast.c blast.h
+	gcc -c blast.c
+
+game: game.c asteroid.o spaceship.o blast.o
+	gcc game.c asteroid.o spaceship.o blast.o -o game -I . -l allegro -l allegro_primitives

@@ -1,0 +1,48 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+/* Write a program that try to gues wich type (simple) the user entered */
+
+/* The types I can gues */
+enum typeTag { INT, CHAR, DOUBLE };
+
+/* Datattype to hold tokeni read from line */
+struct token {
+  char type;
+  char string[10];
+};
+
+struct token stack[10];
+struct token this;
+
+/* Implement push/pop for the stack */
+#define pop stack[top--]
+#define push(s) stack[++top]=s
+
+int main()
+{
+  char input[80];
+  char *charPtr = input;
+
+  printf("Please write some input (simple types and max 79 char), and let me see if I can gues thiere data type:\n");
+  fgets(input, 79, stdin);
+
+  /* Read tokens from input */
+  char *p = this.string;
+
+  char *i = input;
+
+  for(i; *i!='\0'; i++) {
+    printf("%c\n", i[0] );
+  }
+
+/*
+  while(*charPtr != '\0') {
+    printf("%s\n", charPtr);
+    charPtr++;
+  }
+*/
+
+  return 0;
+}

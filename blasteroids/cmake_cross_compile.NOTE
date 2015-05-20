@@ -1,0 +1,1 @@
+cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-mingw.cmake -DCMAKE_SYSTEM_PREFIX_PATH=/usr/x86_64-w64-mingw32 ..

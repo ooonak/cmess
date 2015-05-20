@@ -1,0 +1,106 @@
+        -:    0:Source:convert.c
+        -:    0:Graph:convert.gcno
+        -:    0:Data:convert.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <stdlib.h>
+        -:    2:#include <stdio.h>
+        -:    3:#include <string.h>
+        -:    4:#include <ctype.h>
+        -:    5:
+        7:    6:char* fromHex(char hexInput, int *decPtr)
+        -:    7:{
+        -:    8:  char *bin;
+        7:    9:  switch(hexInput) {
+        -:   10:    case '0':
+    #####:   11:      bin = "0000"; 
+    #####:   12:      *decPtr = 0;
+    #####:   13:      break;
+        -:   14:    case '1':
+    #####:   15:      bin = "0001"; 
+    #####:   16:      *decPtr = 1;
+    #####:   17:      break;
+        -:   18:    case '2':
+        1:   19:      bin = "0010"; 
+        1:   20:      *decPtr = 2;
+        1:   21:      break;
+        -:   22:    case '3':
+        1:   23:      bin = "0011"; 
+        1:   24:      *decPtr = 3;
+        1:   25:      break;
+        -:   26:    case '4':
+    #####:   27:      bin = "0100"; 
+    #####:   28:      *decPtr = 4;
+    #####:   29:      break;
+        -:   30:    case '5':
+    #####:   31:      bin = "0101"; 
+    #####:   32:      *decPtr = 5;
+    #####:   33:      break;
+        -:   34:    case '6':
+        1:   35:      bin = "0110"; 
+        1:   36:      *decPtr = 6;
+        1:   37:      break;
+        -:   38:    case '7':
+        1:   39:      bin = "0111"; 
+        1:   40:      *decPtr = 7;
+        1:   41:      break;
+        -:   42:    case '8':
+    #####:   43:      bin = "1000"; 
+    #####:   44:      *decPtr = 8;
+    #####:   45:      break;
+        -:   46:    case '9':
+    #####:   47:      bin = "1001"; 
+    #####:   48:      *decPtr = 9;
+    #####:   49:      break;
+        -:   50:    case 'A':
+    #####:   51:      bin = "1010"; 
+    #####:   52:      *decPtr = 10;
+    #####:   53:      break;
+        -:   54:    case 'B':
+        1:   55:      bin = "1011"; 
+        1:   56:      *decPtr = 11;
+        1:   57:      break;
+        -:   58:    case 'C':
+    #####:   59:      bin = "1100"; 
+    #####:   60:      *decPtr = 12;
+    #####:   61:      break;
+        -:   62:    case 'D':
+    #####:   63:      bin = "1101"; 
+    #####:   64:      *decPtr = 13;
+    #####:   65:      break;
+        -:   66:    case 'E':
+    #####:   67:      bin = "1110"; 
+    #####:   68:      *decPtr = 14;
+    #####:   69:      break;
+        -:   70:    case 'F':
+        1:   71:      bin = "1111"; 
+        1:   72:      *decPtr = 15;
+        1:   73:      break;
+        -:   74:    default:
+        1:   75:      bin = "";
+        1:   76:      *decPtr = 0;
+        -:   77:  }
+        7:   78:  return bin;
+        -:   79:}
+        -:   80:
+        1:   81:int main()
+        -:   82:{
+        -:   83:  char nextLine[80];
+        -:   84:  int decPtr;
+        -:   85:  char tmpIn;
+        -:   86:  char *tmpOut;
+        -:   87:
+        5:   88:  while(fgets(nextLine, sizeof(nextLine), stdin)) {
+        4:   89:    if(nextLine[0] == 'Q')
+        1:   90:      break;
+        -:   91:    int i; 
+        3:   92:    int len = strlen(nextLine);
+       10:   93:    for(i=0; i<len-1; i++) {
+        7:   94:      tmpIn = toupper(nextLine[i]); 
+        7:   95:      tmpOut = fromHex(tmpIn, &decPtr);
+        7:   96:      printf("Dec: %d\tHex: %c\tBin: %s\n", decPtr, tmpIn, tmpOut); 
+        -:   97:    }
+        -:   98:  }
+        -:   99:
+        1:  100:  return 0;
+        -:  101:}

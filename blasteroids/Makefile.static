@@ -1,0 +1,14 @@
+ALLEGRO_LIBRARIES := allegro-5 allegro_image-5
+ALLEGRO_FLAGS := $(shell pkg-config --cflags --libs $(ALLEGRO_LIBRARIES))
+
+spaceship.o: spaceship.c spaceship.h
+	$(CC) -o $@ $^ $(ALLEGRO_FLAGS)
+
+asteroid.o: asteroid.c asteroid.h game.h
+	$(CC) -o $@ $^ $(ALLEGRO_FLAGS)
+
+blast.o: blast.c blast.h spaceship.h game.h
+	$(CC) -o $@ $^ $(ALLEGRO_FLAGS)
+
+game: game.c game.h asteroid.o spaceship.o blast.o
+	gcc -Wall -o2 game.c asteroid.o spaceship.o blast.o -o blasteroids_static -I/usr/local/include  -L/usr/local/lib -lallegro_image-static -l allegro-static -l allegro_primitives-static -l allegro_font-static -l allegro_ttf-static -static

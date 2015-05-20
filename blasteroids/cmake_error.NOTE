@@ -1,0 +1,13 @@
+When doing:
+make 
+after
+cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-mingw.cmake -DCMAKE_SYSTEM_PREFIX_PATH=/usr/x86_64-w64-mingw32 ..
+
+I get:
+CMakeFiles/allegro_image.dir/objects.a(gdiplus.cpp.obj): In function `_ZN7Gdiplus11GdiplusBasedlEPv':
+/usr/x86_64-w64-mingw32/include/gdiplus/gdiplusbase.h:46: undefined reference to `_GdipFree@4'
+collect2: ld returned 1 exit status
+make[2]: *** [lib/allegro_image-5.0.dll] Fejl 1
+make[1]: *** [addons/image/CMakeFiles/allegro_image.dir/all] Fejl 2
+make: *** [all] Fejl 2
+

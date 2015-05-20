@@ -1,0 +1,11 @@
+spaceship.o: spaceship.c spaceship.h
+	gcc -o2 -c spaceship.c
+
+asteroid.o: asteroid.c asteroid.h game.h
+	gcc -o2 -c asteroid.c
+
+blast.o: blast.c blast.h spaceship.h game.h
+	gcc -o2 -c blast.c
+
+game: game.c game.h asteroid.o spaceship.o blast.o
+	gcc -o2 game.c asteroid.o spaceship.o blast.o -o blasteroids -I . -l allegro -l allegro_primitives -l allegro_font -l allegro_ttf
