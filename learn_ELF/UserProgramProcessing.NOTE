@@ -1,0 +1,11 @@
+Link: (give us C pre processed code)
+gcc -E main.c -o main.i
+
+Compile: (give us assembly code)
+gcc -S main.i -o main.s
+
+Assemble: (give us object code, ELF image)
+gcc main.s -o main.o
+
+Look at an ELF image:
+readelf -a main.o
