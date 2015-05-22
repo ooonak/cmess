@@ -1,0 +1,26 @@
+
+;; Function main (null)
+;; enabled by -tree-original
+
+
+{
+  int i = 0;
+
+    int i = 0;
+  goto <D.2201>;
+  <D.2200>:;
+  if (((unsigned int) i & 1) == 0)
+    {
+      puts ((const char *) "Even number");
+    }
+  else
+    {
+      puts ((const char *) "Uneven number");
+    }
+  i++ ;
+  <D.2201>:;
+  if (i <= 5) goto <D.2200>; else goto <D.2202>;
+  <D.2202>:;
+  return 0;
+}
+
