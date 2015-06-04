@@ -1,0 +1,70 @@
+0000000000400540 <cpyPrint>:
+#include <string.h>
+
+#define SIZE 4
+
+void cpyPrint(char *str)
+{
+  400540:	55                   	push   %rbp
+  400541:	48 89 e5             	mov    %rsp,%rbp
+  400544:	48 83 ec 30          	sub    $0x30,%rsp
+  400548:	48 b8 64 06 40 00 00 	movabs $0x400664,%rax
+  40054f:	00 00 00 
+  400552:	48 8d 4d f4          	lea    -0xc(%rbp),%rcx
+  400556:	48 89 7d f8          	mov    %rdi,-0x8(%rbp)
+  char buf1[SIZE];
+
+  /* Ouch stack corruption caused by buffer overflow */
+  strcpy(buf1, str);
+  40055a:	48 8b 75 f8          	mov    -0x8(%rbp),%rsi
+  40055e:	48 89 cf             	mov    %rcx,%rdi
+  400561:	48 89 4d e8          	mov    %rcx,-0x18(%rbp)
+  400565:	48 89 45 e0          	mov    %rax,-0x20(%rbp)
+  400569:	e8 92 fe ff ff       	callq  400400 <strcpy@plt>
+  printf("%s\n", buf1);
+  40056e:	48 8b 7d e0          	mov    -0x20(%rbp),%rdi
+  400572:	48 8b 75 e8          	mov    -0x18(%rbp),%rsi
+  400576:	48 89 45 d8          	mov    %rax,-0x28(%rbp)
+  40057a:	b0 00                	mov    $0x0,%al
+  40057c:	e8 8f fe ff ff       	callq  400410 <printf@plt>
+}
+  400581:	89 45 d4             	mov    %eax,-0x2c(%rbp)
+  400584:	48 83 c4 30          	add    $0x30,%rsp
+  400588:	5d                   	pop    %rbp
+  400589:	c3                   	retq   
+  40058a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+
+0000000000400590 <main>:
+
+int main()
+{
+  400590:	55                   	push   %rbp
+  400591:	48 89 e5             	mov    %rsp,%rbp
+  400594:	48 83 ec 20          	sub    $0x20,%rsp
+  400598:	48 8d 7d e0          	lea    -0x20(%rbp),%rdi
+  40059c:	c7 45 fc 00 00 00 00 	movl   $0x0,-0x4(%rbp)
+  /* Declare a char array way longer than three */
+  char string[] = "Longer than three";
+  4005a3:	48 8b 04 25 70 06 40 	mov    0x400670,%rax
+  4005aa:	00 
+  4005ab:	48 89 45 e0          	mov    %rax,-0x20(%rbp)
+  4005af:	48 8b 04 25 78 06 40 	mov    0x400678,%rax
+  4005b6:	00 
+  4005b7:	48 89 45 e8          	mov    %rax,-0x18(%rbp)
+  4005bb:	66 8b 0c 25 80 06 40 	mov    0x400680,%cx
+  4005c2:	00 
+  4005c3:	66 89 4d f0          	mov    %cx,-0x10(%rbp)
+
+  cpyPrint(string);
+  4005c7:	e8 74 ff ff ff       	callq  400540 <cpyPrint>
+  4005cc:	31 c0                	xor    %eax,%eax
+
+  //printf("END");
+
+  return 0;
+  4005ce:	48 83 c4 20          	add    $0x20,%rsp
+  4005d2:	5d                   	pop    %rbp
+  4005d3:	c3                   	retq   
+  4005d4:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+  4005db:	00 00 00 
+  4005de:	66 90                	xchg   %ax,%ax

@@ -1,0 +1,61 @@
+0000000000400546 <cpyPrint>:
+#include <string.h>
+
+#define SIZE 4
+
+void cpyPrint(char *str)
+{
+  400546:	55                   	push   %rbp
+  400547:	48 89 e5             	mov    %rsp,%rbp
+  40054a:	48 83 ec 20          	sub    $0x20,%rsp
+  40054e:	48 89 7d e8          	mov    %rdi,-0x18(%rbp)
+  char buf1[SIZE];
+
+  /* Ouch stack corruption caused by buffer overflow */
+  strcpy(buf1, str);
+  400552:	48 8b 55 e8          	mov    -0x18(%rbp),%rdx
+  400556:	48 8d 45 f0          	lea    -0x10(%rbp),%rax
+  40055a:	48 89 d6             	mov    %rdx,%rsi
+  40055d:	48 89 c7             	mov    %rax,%rdi
+  400560:	e8 ab fe ff ff       	callq  400410 <strcpy@plt>
+  printf("%s\n", buf1);
+  400565:	48 8d 45 f0          	lea    -0x10(%rbp),%rax
+  400569:	48 89 c7             	mov    %rax,%rdi
+  40056c:	e8 af fe ff ff       	callq  400420 <puts@plt>
+}
+  400571:	90                   	nop
+  400572:	c9                   	leaveq 
+  400573:	c3                   	retq   
+
+0000000000400574 <main>:
+
+int main()
+{
+  400574:	55                   	push   %rbp
+  400575:	48 89 e5             	mov    %rsp,%rbp
+  400578:	48 83 ec 20          	sub    $0x20,%rsp
+  /* Declare a char array way longer than three */
+  char string[] = "Longer than three";
+  40057c:	48 b8 4c 6f 6e 67 65 	movabs $0x74207265676e6f4c,%rax
+  400583:	72 20 74 
+  400586:	48 89 45 e0          	mov    %rax,-0x20(%rbp)
+  40058a:	48 b8 68 61 6e 20 74 	movabs $0x65726874206e6168,%rax
+  400591:	68 72 65 
+  400594:	48 89 45 e8          	mov    %rax,-0x18(%rbp)
+  400598:	66 c7 45 f0 65 00    	movw   $0x65,-0x10(%rbp)
+
+  cpyPrint(string);
+  40059e:	48 8d 45 e0          	lea    -0x20(%rbp),%rax
+  4005a2:	48 89 c7             	mov    %rax,%rdi
+  4005a5:	e8 9c ff ff ff       	callq  400546 <cpyPrint>
+
+  //printf("END");
+
+  return 0;
+  4005aa:	b8 00 00 00 00       	mov    $0x0,%eax
+}
+  4005af:	c9                   	leaveq 
+  4005b0:	c3                   	retq   
+  4005b1:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+  4005b8:	00 00 00 
+  4005bb:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
