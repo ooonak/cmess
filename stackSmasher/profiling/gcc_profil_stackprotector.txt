@@ -1,0 +1,141 @@
+--------------------------------------------------------------------------------
+Profile data file 'callgrind.out.1777' (creator: callgrind-3.10.1)
+--------------------------------------------------------------------------------
+I1 cache: 
+D1 cache: 
+LL cache: 
+Timerange: Basic block 0 - 23574
+Trigger: Program termination
+Profiled target:  ./stackSmasher_gcc (PID 1777, part 1)
+Events recorded:  Ir
+Events shown:     Ir
+Event sort order: Ir
+Thresholds:       99
+Include dirs:     
+User annotated:   stackSmasher.c
+Auto-annotation:  off
+
+--------------------------------------------------------------------------------
+     Ir 
+--------------------------------------------------------------------------------
+107,428  PROGRAM TOTALS
+
+--------------------------------------------------------------------------------
+    Ir  file:function
+--------------------------------------------------------------------------------
+25,662  ???:_dl_relocate_object [/usr/lib/ld-2.21.so]
+24,615  ???:do_lookup_x [/usr/lib/ld-2.21.so]
+19,023  ???:_dl_lookup_symbol_x [/usr/lib/ld-2.21.so]
+ 9,028  ???:strcmp'2 [/usr/lib/ld-2.21.so]
+ 4,807  ???:check_match [/usr/lib/ld-2.21.so]
+ 2,466  ???:memset [/usr/lib/ld-2.21.so]
+ 1,740  ???:_dl_map_object_from_fd [/usr/lib/ld-2.21.so]
+ 1,337  ???:strcmp [/usr/lib/ld-2.21.so]
+ 1,238  ???:_dl_check_map_versions [/usr/lib/ld-2.21.so]
+ 1,101  ???:_dl_map_object_deps [/usr/lib/ld-2.21.so]
+ 1,066  ???:dl_main [/usr/lib/ld-2.21.so]
+ 1,049  ???:_dl_name_match_p [/usr/lib/ld-2.21.so]
+ 1,041  ???:bcmp [/usr/lib/ld-2.21.so]
+   915  ???:strsep [/usr/lib/ld-2.21.so]
+   898  ???:intel_check_word [/usr/lib/libc-2.21.so]
+   849  ???:_dl_cache_libcmp [/usr/lib/ld-2.21.so]
+   678  ???:_dl_start [/usr/lib/ld-2.21.so]
+   667  ???:strlen [/usr/lib/ld-2.21.so]
+   610  ???:_dl_new_object [/usr/lib/ld-2.21.so]
+   517  ???:__libc_memalign [/usr/lib/ld-2.21.so]
+   427  ???:_dl_map_object [/usr/lib/ld-2.21.so]
+   409  ???:open_verify [/usr/lib/ld-2.21.so]
+   396  ???:_dl_sysdep_start [/usr/lib/ld-2.21.so]
+   381  ???:memcpy [/usr/lib/ld-2.21.so]
+   365  ???:_dl_load_cache_lookup [/usr/lib/ld-2.21.so]
+   334  ???:_dl_fixup [/usr/lib/ld-2.21.so]
+   317  ???:_dl_allocate_tls_storage [/usr/lib/ld-2.21.so]
+   284  ???:match_symbol [/usr/lib/ld-2.21.so]
+   276  ???:_dl_fini [/usr/lib/ld-2.21.so]
+   261  ???:_dl_important_hwcaps [/usr/lib/ld-2.21.so]
+   185  ???:_IO_file_overflow@@GLIBC_2.2.5 [/usr/lib/libc-2.21.so]
+   170  ???:_dl_sort_fini [/usr/lib/ld-2.21.so]
+   163  ???:_dl_next_ld_env_entry [/usr/lib/ld-2.21.so]
+   163  ???:index [/usr/lib/ld-2.21.so]
+   155  ???:call_init.part.0 [/usr/lib/ld-2.21.so]
+   149  ???:init_cacheinfo [/usr/lib/libc-2.21.so]
+   143  ???:mempcpy [/usr/lib/ld-2.21.so]
+   120  ???:_dl_catch_error [/usr/lib/ld-2.21.so]
+   116  ???:_dl_runtime_resolve [/usr/lib/ld-2.21.so]
+   103  ???:_dl_add_to_namespace_list [/usr/lib/ld-2.21.so]
+   103  ???:_init [/usr/lib/libc-2.21.so]
+   100  ???:_IO_cleanup [/usr/lib/libc-2.21.so]
+    98  ???:handle_intel [/usr/lib/libc-2.21.so]
+    93  ???:_dl_init_paths [/usr/lib/ld-2.21.so]
+    92  ???:_dl_setup_hash [/usr/lib/ld-2.21.so]
+    90  ???:_IO_flush_all_lockp [/usr/lib/libc-2.21.so]
+    90  ???:_dl_allocate_tls_init [/usr/lib/ld-2.21.so]
+    84  ???:_dl_init [/usr/lib/ld-2.21.so]
+    80  ???:_dl_discover_osversion [/usr/lib/ld-2.21.so]
+    79  ???:__init_cpu_features [/usr/lib/libc-2.21.so]
+    75  ???:__sigsetjmp [/usr/lib/ld-2.21.so]
+    75  ???:_dl_check_all_versions [/usr/lib/ld-2.21.so]
+    74  ???:_IO_default_xsputn [/usr/lib/libc-2.21.so]
+    72  ???:calloc [/usr/lib/ld-2.21.so]
+    72  ???:malloc [/usr/lib/ld-2.21.so]
+    71  ???:_dl_determine_tlsoffset [/usr/lib/ld-2.21.so]
+    71  ???:init_tls [/usr/lib/ld-2.21.so]
+    63  ???:_dl_protect_relro [/usr/lib/ld-2.21.so]
+    61  ???:puts [/usr/lib/libc-2.21.so]
+    60  ???:gettimeofday [/usr/lib/libc-2.21.so]
+    60  ???:time [/usr/lib/libc-2.21.so]
+    58  ???:(below main) [/usr/lib/libc-2.21.so]
+    56  ???:__run_exit_handlers [/usr/lib/libc-2.21.so]
+    54  ???:_IO_file_doallocate [/usr/lib/libc-2.21.so]
+    54  ???:rindex [/usr/lib/libc-2.21.so]
+    54  ???:mmap [/usr/lib/ld-2.21.so]
+    53  ???:_IO_file_xsputn@@GLIBC_2.2.5 [/usr/lib/libc-2.21.so]
+    47  ???:__cxa_finalize [/usr/lib/libc-2.21.so]
+    41  ???:_dl_sysdep_read_whole_file [/usr/lib/ld-2.21.so]
+    41  ???:_dl_debug_initialize [/usr/lib/ld-2.21.so]
+    40  ???:new_do_write [/usr/lib/libc-2.21.so]
+
+--------------------------------------------------------------------------------
+-- User-annotated source: stackSmasher.c
+--------------------------------------------------------------------------------
+Ir 
+
+-- line 3 ----------------------------------------
+ .   */
+ .  
+ .  #include <stdio.h>
+ .  #include <string.h>
+ .  
+ .  #define SIZE 4
+ .  
+ .  void cpyPrint(char *str)
+ 7  {
+ .    char buf1[SIZE];
+ .  
+ .    /* Ouch stack corruption caused by buffer overflow */
+10    strcpy(buf1, str);
+23  => ???:__strcpy_sse2_unaligned (1x)
+809  => ???:_dl_runtime_resolve (1x)
+ 8    printf("%s\n", buf1);
+599  => ???:puts (1x)
+770  => ???:_dl_runtime_resolve (1x)
+ 6  }
+ .  
+ .  int main()
+ 6  {
+ .    /* Declare a char array way longer than three */
+ 1    char string[] = "The";
+ .  
+ 3    cpyPrint(string);
+2,232  => stackSmasher.c:cpyPrint (1x)
+ .  
+ .    //printf("END");
+ .  
+ 1    return 0;
+ 5  }
+
+--------------------------------------------------------------------------------
+Ir 
+--------------------------------------------------------------------------------
+ 0  percentage of events annotated
+
